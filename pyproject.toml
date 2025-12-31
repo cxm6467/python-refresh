@@ -1,9 +1,10 @@
 [project]
 name = "py-learn"
-version = "0.1.0"
-description = "Add your description here"
+version = "0.0.1"
+description = "Project to relearn python"
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
     "fastapi[standard]>=0.128.0",
+    "scalar-fastapi>=1.5.0",
 ]
