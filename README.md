@@ -27,6 +27,7 @@ GET /
 ```
 GET /items
 ```
+Returns: `dict[int, Item]` - Dictionary mapping item IDs to Item objects
 
 ### Get Item by ID
 ```
@@ -73,3 +74,12 @@ GET /scalar
 - `category: str | None`
 - `price_usd: float | None`
 - `in_stock: bool | None`
+
+## Database Structure
+
+The in-memory database uses a dictionary-based structure where items are stored with their integer IDs as keys:
+```python
+db: dict[str, dict[int, Item]]
+```
+
+This allows for O(1) lookups by ID and easier item management.
