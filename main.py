@@ -2,13 +2,10 @@ from fastapi import FastAPI, HTTPException
 from scalar_fastapi import get_scalar_api_reference
 
 from database import db
+from helpers import find_item_by_id
 from models import Item, ItemCreate, ItemUpdate
 
 app = FastAPI()
-
-
-def find_item_by_id(item_id: int) -> Item | None:
-    return next((i for i in db["items"] if i.id == item_id), None)
 
 
 # GET /items/{item_id}
@@ -25,17 +22,17 @@ def get_item(item_id: int) -> Item:
     return item
 
 
-@app.get("/items", response_model=list[Item])
-def get_items() -> list[Item]:
+@app.get("/items", response_model=dict[int, Item])
+def get_items() -> dict[int, Item]:
     return db["items"]
 
 
 # POST /items
 @app.post("/items", response_model=Item)
 def create_item(item: ItemCreate) -> Item:
-    next_id = max((i.id for i in db["items"]), default=0) + 1
+    next_id = max(db["items"].keys(), default=0) + 1
     created = Item(id=next_id, **item.model_dump())
-    db["items"].append(created)
+    db["items"][next_id] = created
     return created
 
 
@@ -57,7 +54,7 @@ def delete_item(item_id: int) -> None:
     item = find_item_by_id(item_id)
     if item is None:
         raise HTTPException(status_code=404, detail="Item not found")
-    db["items"].remove(item)
+    del db["items"][item_id]
 
 
 # Scalar docs
