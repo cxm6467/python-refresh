@@ -28,7 +28,7 @@ def get_items() -> dict[int, Item]:
 
 
 # POST /items
-@app.post("/items", response_model=Item)
+@app.post("/items", response_model=Item, status_code=201)
 def create_item(item: ItemCreate) -> Item:
     next_id = max(db["items"].keys(), default=0) + 1
     created = Item(id=next_id, **item.model_dump())
@@ -49,7 +49,7 @@ def update_item(item_id: int, update: ItemUpdate) -> Item:
 
 
 # DELETE /items/{item_id}
-@app.delete("/items/{item_id}")
+@app.delete("/items/{item_id}", status_code=204)
 def delete_item(item_id: int) -> None:
     item = find_item_by_id(item_id)
     if item is None:

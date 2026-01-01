@@ -1,23 +1,23 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 
 class Item(BaseModel):
     id: int
-    name: str
-    category: str
-    price_usd: float
+    name: str = Field(max_length=64)
+    category: str = Field(max_length=128)
+    price_usd: float = Field(ge=0)
     in_stock: bool
 
 
 class ItemCreate(BaseModel):
-    name: str
-    category: str
-    price_usd: float
+    name: str = Field(max_length=64)
+    category: str = Field(max_length=128)
+    price_usd: float = Field(ge=0)
     in_stock: bool
 
 
 class ItemUpdate(BaseModel):
-    name: str | None = None
-    category: str | None = None
-    price_usd: float | None = None
+    name: str | None = Field(default=None, max_length=64)
+    category: str | None = Field(default=None, max_length=128)
+    price_usd: float | None = Field(default=None, ge=0)
     in_stock: bool | None = None
