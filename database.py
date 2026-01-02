@@ -139,3 +139,12 @@ class Database:
         self.curr.close()
         self.conn.close()
 
+    def __enter__(self):
+        """Context manager entry. Returns self for use in 'with' statement."""
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        """Context manager exit. Automatically closes connection."""
+        self.close()
+        return False  # Don't suppress exceptions
+
