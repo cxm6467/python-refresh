@@ -1,12 +1,17 @@
 # Python FastAPI CRUD API
 
+A FastAPI-based REST API for managing items with SQLite persistence.
+
 ## Project Structure
 
 ```
-python-refresh/
+py-learn/
 ├── main.py          # FastAPI app and route handlers
-├── models.py        # Pydantic models
-├── database.py      # In-memory database
+├── models.py        # Pydantic models (Item, ItemCreate, ItemUpdate)
+├── database.py      # SQLite database class with CRUD operations
+├── helpers.py       # Helper functions
+├── database.json    # Seed data for database
+├── sqlite.db        # SQLite database file (generated)
 └── README.md
 ```
 
@@ -16,12 +21,15 @@ python-refresh/
 fastapi dev
 ```
 
+The server will start at `http://localhost:8000`
+
 ## API Endpoints
 
 ### Root
 ```
 GET /
 ```
+Returns: `{"message": "Hello World"}`
 
 ### Get All Items
 ```
@@ -33,53 +41,94 @@ Returns: `dict[int, Item]` - Dictionary mapping item IDs to Item objects
 ```
 GET /items/{item_id}
 ```
+Returns: `Item` object or 404 if not found
 
 ### Create Item
 ```
 POST /items
 ```
+Request body: `ItemCreate`
+Returns: `Item` with auto-generated ID
+Status: 201
 
 ### Update Item
 ```
 PATCH /items/{item_id}
 ```
+Request body: `ItemUpdate` (all fields optional)
+Returns: Updated `Item` or 404 if not found
 
 ### Delete Item
 ```
 DELETE /items/{item_id}
 ```
+Returns: 204 No Content on success, 404 if not found
 
 ### API Documentation
 ```
 GET /scalar
 ```
+Interactive Scalar API documentation
 
 ## Models
 
+### Category (Enum)
+- `GROCERY`
+- `HOUSEHOLD`
+- `ELECTRONICS`
+- `STATIONERY`
+- `PERSONAL_CARE`
+- `APPAREL`
+- `HOME_IMPROVEMENT`
+- `PET`
+
 ### Item
-- `id: int`
-- `name: str`
-- `category: str`
-- `price_usd: float`
-- `in_stock: bool`
+- `id: int` - Auto-generated unique identifier
+- `name: str` - Item name (max 64 characters)
+- `category: Category` - Item category enum
+- `price_usd: float` - Price in USD (>= 0)
+- `in_stock: bool` - Availability status
 
 ### ItemCreate
-- `name: str`
-- `category: str`
-- `price_usd: float`
-- `in_stock: bool`
+- `name: str` - Item name (max 64 characters)
+- `category: Category` - Item category enum
+- `price_usd: float` - Price in USD (>= 0)
+- `in_stock: bool` - Availability status
 
 ### ItemUpdate
+All fields are optional for partial updates:
 - `name: str | None`
-- `category: str | None`
+- `category: Category | None`
 - `price_usd: float | None`
 - `in_stock: bool | None`
 
-## Database Structure
+## Database
 
-The in-memory database uses a dictionary-based structure where items are stored with their integer IDs as keys:
-```python
-db: dict[str, dict[int, Item]]
+The application uses SQLite for persistent storage.
+
+### Database Schema
+
+```sql
+CREATE TABLE items(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL,
+    category TEXT NOT NULL,
+    price_usd REAL NOT NULL,
+    in_stock INTEGER NOT NULL
+);
 ```
 
-This allows for O(1) lookups by ID and easier item management.
+### Database Class Methods
+
+- `create_item(item: ItemCreate) -> Item` - Insert new item with auto-generated ID
+- `get_item(item_id: int) -> Item | None` - Fetch single item by ID
+- `get_items() -> dict[int, Item]` - Fetch all items as dictionary
+- `update_item(item_id: int, update: ItemUpdate) -> Item` - Update existing item
+- `delete_item(item_id: int) -> None` - Delete item by ID
+- `close()` - Close database connection
+
+### Security Features
+
+- Parameterized queries using `?` placeholders to prevent SQL injection
+- Type-safe with Pydantic validation
+- Auto-increment IDs eliminate race conditions
