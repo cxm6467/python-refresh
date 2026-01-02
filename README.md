@@ -104,7 +104,7 @@ All fields are optional for partial updates:
 
 ## Database
 
-The application uses SQLite for persistent storage.
+The application uses SQLite for persistent storage with automatic connection management via context managers.
 
 ### Database Schema
 
@@ -127,8 +127,21 @@ CREATE TABLE items(
 - `delete_item(item_id: int) -> None` - Delete item by ID
 - `close()` - Close database connection
 
+### Context Manager Support
+
+The Database class implements the context manager protocol (`__enter__` and `__exit__`), allowing automatic connection cleanup:
+
+```python
+with Database() as db:
+    item = db.get_item(item_id)
+    # Connection automatically closed when exiting the 'with' block
+```
+
+This ensures proper resource management and prevents connection leaks.
+
 ### Security Features
 
 - Parameterized queries using `?` placeholders to prevent SQL injection
 - Type-safe with Pydantic validation
 - Auto-increment IDs eliminate race conditions
+- Automatic connection cleanup via context managers
