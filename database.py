@@ -1,4 +1,47 @@
+import json
+import sqlite3
+
 from models import Category, Item
+
+# Load seed data from JSON
+with open("database.json") as f:
+    data = json.load(f)
+
+connection = sqlite3.connect("sqlite.db")
+cursor = connection.cursor()
+
+# Create Table
+cursor.execute(
+    """CREATE TABLE IF NOT EXISTS items(
+        id INTEGER PRIMARY KEY,
+        name TEXT NOT NULL,
+        category TEXT NOT NULL,
+        price_usd REAL NOT NULL,
+        in_stock INTEGER NOT NULL
+    )"""
+)
+
+# Prepare items for insertion
+items_to_insert = [
+    (
+        item["id"],
+        item["name"],
+        item["category"],
+        item["price_usd"],
+        int(item["in_stock"]),
+    )
+    for item in data["items"].values()
+]
+
+# Insert items into database
+cursor.executemany(
+    """INSERT OR IGNORE INTO items (id, name, category, price_usd, in_stock)
+    VALUES (?, ?, ?, ?, ?)""",
+    items_to_insert,
+)
+
+connection.commit()
+connection.close()
 
 db: dict[str, dict[int, Item]] = {
     "items": {
