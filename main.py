@@ -1,4 +1,5 @@
 from fastapi import FastAPI, HTTPException
+from fastapi.responses import RedirectResponse
 from scalar_fastapi import get_scalar_api_reference
 
 from database import Database
@@ -9,8 +10,8 @@ app = FastAPI()
 # GET /items/{item_id}
 @app.get("/")
 def root():
-    return {"message": "Hello World"}
-
+    # return {"message": "Hello World"}
+    return RedirectResponse(url="scalar", status_code=302)
 
 @app.get("/items/{item_id}", response_model=Item)
 def get_item(item_id: int) -> Item:
