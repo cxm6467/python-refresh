@@ -2,17 +2,24 @@
 
 A FastAPI-based REST API for managing items with SQLite persistence.
 
+Following the tutorial: https://www.udemy.com/course/fastapi-guide/
+
 ## Project Structure
 
 ```
-py-learn/
-├── main.py          # FastAPI app and route handlers
-├── models.py        # Pydantic models (Item, ItemCreate, ItemUpdate)
-├── database.py      # SQLite database class with CRUD operations
-├── helpers.py       # Helper functions
-├── database.json    # Seed data for database
-├── sqlite.db        # SQLite database file (generated)
-└── README.md
+app/
+├── main.py                   # Application entry point
+├── api/
+│   ├── router.py             # API route handlers
+│   ├── dependencies.py       # Dependency injection
+│   └── schemas/
+│       └── models.py         # Pydantic models
+├── database/
+│   ├── config.py             # Database configuration
+│   ├── models.py             # Database models
+│   └── session.py            # Database session management
+└── services/
+    └── item.py               # Business logic for items
 ```
 
 ## Running the Application
