@@ -1,5 +1,6 @@
 from enum import Enum
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
+from sqlmodel import SQLModel, Field
 
 class Category(str, Enum):
     GROCERY = "Grocery"
@@ -12,8 +13,10 @@ class Category(str, Enum):
     PET = "Pet"
 
 
-class Item(BaseModel):
-    id: int
+class Item(SQLModel, table=True):
+    __tablename__ = "items"
+
+    id: int | None = Field(default=None, primary_key=True)
     name: str = Field(max_length=64)
     category: Category
     price_usd: float = Field(ge=0)
