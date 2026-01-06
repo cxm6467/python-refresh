@@ -1,0 +1,35 @@
+from fastapi import APIRouter, HTTPException
+
+from app.api.dependencies import StoreManagerServiceDep, SessionDep
+from app.api.schemas.store_manager import StoreManagerCreate, StoreManagerUpdate
+from app.database.models import StoreManager
+
+router = APIRouter(prefix="/store-managers", tags=["store-managers"])
+
+@router.get("/{id}", response_model=StoreManager)
+async def get_storemanager(id: int, session: SessionDep, service: StoreManagerServiceDep) -> StoreManager:
+    manager = await service.get(id)
+    if manager is None:
+        raise HTTPException(status_code=404, detail="StoreManager not found")
+    return manager
+
+
+@router.get("/", response_model=dict[int, StoreManager])
+async def get_storemanagers(session: SessionDep, service: StoreManagerServiceDep) -> dict[int, StoreManager]:
+    storemanagers = await service.get_all()
+    return {storemanager.id: storemanager for storemanager in storemanagers}
+
+
+@router.post("/", response_model=StoreManager, status_code=201)
+async def create_storemanager(storemanager: StoreManagerCreate, session: SessionDep, service: StoreManagerServiceDep) -> StoreManager:
+    return await service.add(storemanager)
+
+
+@router.patch("/{id}", response_model=StoreManager)
+async def update_storemanager(id: int, update: StoreManagerUpdate, session: SessionDep, service: StoreManagerServiceDep) -> StoreManager:
+    return await service.update(id, update)
+
+
+@router.delete("/{id}", status_code=204)
+async def delete_storemanager(id: int, session: SessionDep, service: StoreManagerServiceDep) -> None:
+    await service.delete(id)

@@ -1,4 +1,4 @@
-from app.api.router import router
+from app.api.router import master_router
 
-__all__ = ["router"]
+__all__ = ["master_router"]
 

@@ -2,7 +2,7 @@ from fastapi import HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlmodel import select
 
-from app.api.schemas.models import ItemCreate, ItemUpdate
+from app.api.schemas.item import ItemCreate, ItemUpdate
 from app.database.models import Item
 
 
