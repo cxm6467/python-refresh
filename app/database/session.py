@@ -27,6 +27,3 @@ async def create_db_tables():
 async def get_session() -> AsyncGenerator[AsyncSession, None]:
     async with async_session_maker() as session:
         yield session
-
-SessionDep = Annotated[AsyncSession, Depends(get_session)]
-
