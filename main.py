@@ -32,8 +32,8 @@ async def get_item(item_id: int, session: SessionDep) -> Item:
 
 @app.get("/items", response_model=dict[int, Item])
 async def get_items(session: SessionDep) -> dict[int, Item]:
-    result = await session.exec(select(Item))
-    items = result.all()
+    result = await session.execute(select(Item))
+    items = result.scalars().all()
     return {item.id: item for item in items}
 
 
