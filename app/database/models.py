@@ -1,7 +1,6 @@
 from sqlmodel import SQLModel, Field
 
-from app.api.models import Category
-
+from app.api.schemas.models import Category
 
 class Item(SQLModel, table=True):
     __tablename__ = "items"

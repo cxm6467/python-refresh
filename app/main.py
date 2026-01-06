@@ -8,9 +8,7 @@ from app.api.router import router
 
 @asynccontextmanager
 async def lifespan_handler(app: FastAPI):
-    # Skip table creation in dev if SKIP_DB_INIT=1 is set
-    if not os.getenv("SKIP_DB_INIT"):
-        await create_db_tables()
+    await create_db_tables()
     yield
 
 app = FastAPI(lifespan=lifespan_handler)
