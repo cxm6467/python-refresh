@@ -38,5 +38,6 @@ class ItemService:
         item = await self.session.get(Item, id)
         if item is None:
             raise HTTPException(status_code=404, detail=f"Item with id {id} not found")
-        self.session.delete(item)
+        await self.session.delete(item)
+        await self.session.flush()
         await self.session.commit()
