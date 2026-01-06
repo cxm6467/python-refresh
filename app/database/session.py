@@ -5,7 +5,7 @@ from fastapi import Depends
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 from sqlalchemy.orm import sessionmaker
 
-from config import Config
+from app.database.config import Config
 from sqlmodel import SQLModel
 
 config = Config()
@@ -29,3 +29,4 @@ async def get_session() -> AsyncGenerator[AsyncSession, None]:
         yield session
 
 SessionDep = Annotated[AsyncSession, Depends(get_session)]
+
