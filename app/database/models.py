@@ -18,4 +18,4 @@ class StoreManager(SQLModel, table=True):
     id: int | None = Field(default=None, primary_key=True)
     name: str = Field(max_length=64)
     email: EmailStr
-    password_hash: str = Field(min_length=8, max_length=32)
+    password_hash: str

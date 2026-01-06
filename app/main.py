@@ -18,11 +18,6 @@ app.include_router(master_router)
 def root():
     return RedirectResponse(url="scalar", status_code=302)
 
-
-@app.post("/store-managers/signup")
-def signup_manager():
-    pass
-
 @app.get("/scalar", include_in_schema=False)
 async def get_scalar_api_docs():
     return get_scalar_api_reference(

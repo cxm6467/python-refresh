@@ -4,13 +4,12 @@ from typing import AsyncGenerator
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 from sqlalchemy.orm import sessionmaker
 
-from app.database.config import Config
+from config import db_config
 from sqlmodel import SQLModel
 
-config = Config()
 
 engine = create_async_engine(
-    url=config.POSTGRES_URL,
+    url=db_config.POSTGRES_URL,
     pool_pre_ping=True,  # Verify connections before using
     pool_size=5,
     max_overflow=10,
