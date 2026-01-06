@@ -1,8 +1,7 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, HTTPException
 from app.api.dependencies import SessionDep, ServiceDep
 from app.database.models import Item
 from app.api.schemas.models import ItemCreate, ItemUpdate
-from app.services.item import ItemService
 
 router = APIRouter()
 
