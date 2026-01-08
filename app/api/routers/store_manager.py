@@ -21,24 +21,3 @@ async def logout(token_data: Annotated[dict[str, str | int], Depends(get_access_
     token_id = token_data["jti"]
     await service.logout(token_id)
     return {"message": "Logged out successfully"}
-
-# @router.get("/{id}", response_model=StoreManager)
-# async def get_storemanager(id: int, session: SessionDep, service: StoreManagerServiceDep) -> StoreManager:
-#     manager = await service.get(id)
-#     if manager is None:
-#         raise HTTPException(status_code=404, detail="StoreManager not found")
-#     return manager
-
-# @router.patch("/{id}", response_model=StoreManager)
-# async def update_storemanager(id: int, update: StoreManagerUpdate, session: SessionDep, service: StoreManagerServiceDep) -> StoreManager:
-#     return await service.update(id, update)
-
-
-# @router.delete("/{id}", status_code=204)
-# async def delete_storemanager(id: int, session: SessionDep, service: StoreManagerServiceDep) -> None:
-#     await service.delete(id)
-
-# @router.get("/", response_model=dict[int, StoreManager])
-# async def get_storemanagers(session: SessionDep, service: StoreManagerServiceDep) -> dict[int, StoreManager]:
-#     storemanagers = await service.get_all()
-#     return {storemanager.id: storemanager for storemanager in storemanagers}

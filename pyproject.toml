@@ -15,4 +15,5 @@ dependencies = [
     "sqlalchemy>=2.0.45",
     "sqlmodel>=0.0.31",
     "redis[hiredis]>=7.1.0",
+    "alembic>=1.17.2",
 ]
