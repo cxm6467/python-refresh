@@ -1,5 +1,11 @@
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
+_base_config = SettingsConfigDict(
+    env_file=".env",
+    env_ignore_empty=True,
+    extra="ignore",
+)
+
 class DatabaseConfig(BaseSettings):
     POSTGRES_PASSWORD: str
     POSTGRES_USER: str
@@ -7,12 +13,11 @@ class DatabaseConfig(BaseSettings):
     POSTGRES_PORT: int
     POSTGRES_DB: str
 
-    
-    model_config = SettingsConfigDict(
-        env_file=".env",
-        env_ignore_empty=True,
-        extra="ignore",
-        )
+    REDIS_HOST: str
+    REDIS_PORT: int
+    REDIS_DB: int
+
+    model_config = _base_config
 
     @property
     def POSTGRES_URL(self) -> str:
@@ -23,11 +28,7 @@ class SecurityConfig(BaseSettings):
     JWT_SECRET: str
     JWT_ALGORITHM: str
     
-    model_config = SettingsConfigDict(
-        env_file=".env",
-        env_ignore_empty=True,
-        extra="ignore",
-        )
+    model_config = _base_config
 
 security_config = SecurityConfig()
 db_config = DatabaseConfig()

@@ -1,14 +1,17 @@
+from http import HTTPStatus
 from typing import Annotated
-from fastapi import APIRouter, Depends
+from app.database.redis import add_to_token_blacklist
+from fastapi import APIRouter, Depends, HTTPException
 from fastapi.security import OAuth2PasswordRequestForm
 
-from app.api.dependencies import StoreManagerServiceDep, SessionDep
+from app.api.dependencies import AccessTokenDep, StoreManagerServiceDep, SessionDep
 from app.api.schemas.store_manager import StoreManagerCreate
 from app.database.models import StoreManager
+from app.utils import decode_access_token
 
 router = APIRouter(prefix="/store-managers", tags=["store-managers"])
 
-
+from app.api.core.security import oauth2_scheme
 
 @router.post("/", response_model=StoreManager, status_code=201)
 async def create_storemanager(storemanager: StoreManagerCreate, session: SessionDep, service: StoreManagerServiceDep) -> StoreManager:
@@ -17,6 +20,12 @@ async def create_storemanager(storemanager: StoreManagerCreate, session: Session
 @router.post("/token")
 async def get_access_token(request: Annotated[OAuth2PasswordRequestForm, Depends()], service: StoreManagerServiceDep) -> dict[str, str]:
     return await service.token(request.username, request.password)
+
+@router.get("/logout")
+async def logout(token: AccessTokenDep, service: StoreManagerServiceDep):
+    token_id = token
+    await add_to_token_blacklist(token_id)
+    return {"message": "Logged out successfully"}
 
 # @router.get("/{id}", response_model=StoreManager)
 # async def get_storemanager(id: int, session: SessionDep, service: StoreManagerServiceDep) -> StoreManager:
