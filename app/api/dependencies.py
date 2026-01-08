@@ -1,4 +1,5 @@
 from typing import Annotated
+from uuid import UUID
 from app.database.models import StoreManager
 
 from app.database.redis import is_token_blacklisted
@@ -15,7 +16,7 @@ from app.utils import decode_access_token
 SessionDep = Annotated[AsyncSession, Depends(get_session)]
 AccessTokenDep = Annotated[str, Depends(oauth2_scheme)]
 
-async def get_access_token_data(token: AccessTokenDep) -> dict:
+async def get_access_token_data(token: AccessTokenDep) -> dict[str, str | int]:
     result = decode_access_token(token)
     if result is None or await is_token_blacklisted(result["jti"]):
         raise HTTPException(status_code=HTTPStatus.UNAUTHORIZED, detail="Invalid token")
@@ -23,7 +24,7 @@ async def get_access_token_data(token: AccessTokenDep) -> dict:
 
 async def get_current_manager(token: AccessTokenDep, session: SessionDep) -> StoreManager:
     result = await get_access_token_data(token)
-    manager = await session.get(StoreManager, result["id"])
+    manager = await session.get(StoreManager, UUID(result["id"]))
     if manager is None:
         raise HTTPException(status_code=HTTPStatus.UNAUTHORIZED, detail="Invalid token")
     return manager

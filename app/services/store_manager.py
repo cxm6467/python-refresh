@@ -8,6 +8,7 @@ from passlib.context import CryptContext
 from app.api.schemas.store_manager import StoreManagerCreate
 from app.utils import generate_access_token
 from app.database.models import StoreManager
+from app.database.redis import add_to_token_blacklist
 
 pwd_ctx = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
@@ -31,7 +32,7 @@ class StoreManagerService:
         await self.session.refresh(created)
         return created   
 
-    async def token(self, email, password_hash) -> dict[str, str]:
+    async def token(self, email: str, password_hash: str) -> dict[str, str]:
         result = await self.session.execute(select(StoreManager).where(StoreManager.email == email))
         store_manager = result.scalar()
 
@@ -40,12 +41,11 @@ class StoreManagerService:
         if not pwd_ctx.verify(password_hash, store_manager.password_hash):
             raise HTTPException(status_code=HTTPStatus.UNAUTHORIZED, detail="Invalid credentials")
 
-        access_token = generate_access_token(data={"user": store_manager.name, "id": store_manager.id}, expiry=timedelta(days=1))
+        access_token = generate_access_token(data={"user": store_manager.name, "id": str(store_manager.id)}, expiry=timedelta(days=1))
         return {"access_token": access_token, "token_type": "jwt"}
 
     async def logout(self, token_id: str) -> None:
-        await self.session.execute(delete(AccessToken).where(AccessToken.jti == token_id))
-        await self.session.commit()
+        await add_to_token_blacklist(token_id)
             
     # async def delete(self, id: int) -> None:
     #     manager = await self.session.get(

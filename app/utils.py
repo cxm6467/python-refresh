@@ -5,7 +5,7 @@ import jwt
 from config import security_config
 
 
-def generate_access_token(data: dict, expiry: timedelta = timedelta(days=1)) -> str:
+def generate_access_token(data: dict[str, str | int], expiry: timedelta = timedelta(days=1)) -> str | None:
     try:
         return jwt.encode(
             payload={
@@ -19,7 +19,7 @@ def generate_access_token(data: dict, expiry: timedelta = timedelta(days=1)) -> 
     except jwt.PyJWTError:
         return None
 
-def decode_access_token(token: str) -> dict:
+def decode_access_token(token: str) -> dict[str, str | int] | None:
     try:
         return jwt.decode(
                 jwt=token,
