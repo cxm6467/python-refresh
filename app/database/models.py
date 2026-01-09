@@ -48,7 +48,7 @@ class StoreManager(SQLModel, table=True):
         )
     )
     name: str = Field(max_length=64)
-    email: EmailStr
+    email: EmailStr = Field(unique=True, index=True)
     password_hash: str = Field(exclude=True)
 
     items: list[Item] = Relationship(back_populates="store_manager")
