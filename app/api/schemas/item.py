@@ -1,17 +1,6 @@
-from enum import Enum
 from pydantic import BaseModel
 from sqlmodel import Field
-
-
-class Category(str, Enum):
-    GROCERY = "Grocery"
-    HOUSEHOLD = "Household"
-    ELECTRONICS = "Electronics"
-    STATIONERY = "Stationery"
-    PERSONAL_CARE = "Personal Care"
-    APPAREL = "Apparel"
-    HOME_IMPROVEMENT = "Home Improvement"
-    PET = "Pet"
+from app.database.models import Category
 
 
 class ItemCreate(BaseModel):

@@ -1,11 +1,20 @@
-from typing import Any
-
-
+from enum import Enum
 from pydantic import EmailStr
 from sqlmodel import Column, Relationship, SQLModel, Field
 from uuid import UUID, uuid4
-from app.api.schemas.item import Category
 from sqlalchemy.dialects import postgresql
+
+
+class Category(str, Enum):
+    GROCERY = "Grocery"
+    HOUSEHOLD = "Household"
+    ELECTRONICS = "Electronics"
+    STATIONERY = "Stationery"
+    PERSONAL_CARE = "Personal Care"
+    APPAREL = "Apparel"
+    HOME_IMPROVEMENT = "Home Improvement"
+    PET = "Pet"
+
 
 class Item(SQLModel, table=True):
     __tablename__ = "items"
@@ -24,10 +33,8 @@ class Item(SQLModel, table=True):
     in_stock: bool
 
     store_manager_id: UUID = Field(foreign_key="store_managers.id")
-    store_manager: "StoreManager" = Relationship(
-        back_populates="items",
-        sa_relationship_kwargs={"lazy": "selectin"}
-    )
+    store_manager: "StoreManager" = Relationship(back_populates="items")
+
 
 class StoreManager(SQLModel, table=True):
     __tablename__ = "store_managers"
@@ -42,9 +49,6 @@ class StoreManager(SQLModel, table=True):
     )
     name: str = Field(max_length=64)
     email: EmailStr
-    password_hash: str
+    password_hash: str = Field(exclude=True)
 
-    items: list[Item] = Relationship(
-        back_populates="store_manager",
-        sa_relationship_kwargs={"lazy": "selectin"}
-    )
+    items: list[Item] = Relationship(back_populates="store_manager")
