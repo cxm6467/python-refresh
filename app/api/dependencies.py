@@ -6,6 +6,8 @@ from app.database.redis import is_token_blacklisted
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.api.core.security import AccessTokenBearer, oauth2_scheme
 from app.services.item import ItemService
+from app.services.store import StoreService
+from app.services.store_inventory import StoreInventoryService
 from app.database.session import get_session
 from fastapi import Depends, HTTPException
 from http import HTTPStatus
@@ -32,9 +34,17 @@ async def get_current_manager(token: AccessTokenDep, session: SessionDep) -> Sto
 def get_item_service(session: SessionDep) -> ItemService:
     return ItemService(session)
 
+def get_store_service(session: SessionDep) -> StoreService:
+    return StoreService(session)
+
+def get_store_inventory_service(session: SessionDep) -> StoreInventoryService:
+    return StoreInventoryService(session)
+
 def get_store_manager_service(session: SessionDep) -> StoreManagerService:
     return StoreManagerService(session)
 
 ItemServiceDep = Annotated[ItemService, Depends(get_item_service)]
+StoreServiceDep = Annotated[StoreService, Depends(get_store_service)]
+StoreInventoryServiceDep = Annotated[StoreInventoryService, Depends(get_store_inventory_service)]
 StoreManagerServiceDep = Annotated[StoreManagerService, Depends(get_store_manager_service)]
 StoreManagerDep = Annotated[StoreManager, Depends(get_current_manager)]

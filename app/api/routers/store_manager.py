@@ -1,9 +1,10 @@
 from typing import Annotated
+from uuid import UUID
 from fastapi import APIRouter, Depends
 from fastapi.security import OAuth2PasswordRequestForm
 
-from app.api.dependencies import StoreManagerServiceDep, SessionDep, get_access_token_data
-from app.api.schemas.store_manager import StoreManagerCreate
+from app.api.dependencies import StoreManagerServiceDep, SessionDep, StoreManagerDep, get_access_token_data
+from app.api.schemas.store_manager import StoreManagerCreate, StoreManagerUpdate
 from app.database.models import StoreManager
 
 router = APIRouter(prefix="/store-managers", tags=["store-managers"])
@@ -21,3 +22,12 @@ async def logout(token_data: Annotated[dict[str, str | int], Depends(get_access_
     token_id = token_data["jti"]
     await service.logout(token_id)
     return {"message": "Logged out successfully"}
+
+@router.patch("/{id}", response_model=StoreManager)
+async def update_store_manager(
+    id: UUID,
+    update: StoreManagerUpdate,
+    service: StoreManagerServiceDep,
+    manager: StoreManagerDep
+) -> StoreManager:
+    return await service.update(id, update, manager)

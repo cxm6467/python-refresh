@@ -1,4 +1,5 @@
 from enum import Enum
+from typing import Optional
 from pydantic import EmailStr
 from sqlmodel import Column, Relationship, SQLModel, Field
 from uuid import UUID, uuid4
@@ -49,7 +50,7 @@ class Item(SQLModel, table=True):
     store: "Store" = Relationship(back_populates="items")
 
     store_inventory_id: UUID | None = Field(foreign_key="store_inventories.id", default=None)
-    store_inventory: "StoreInventory | None" = Relationship(back_populates="items")
+    store_inventory: Optional["StoreInventory"] = Relationship(back_populates="items")
 
 
 class Store(SQLModel, table=True):
@@ -67,7 +68,7 @@ class Store(SQLModel, table=True):
     location: str = Field(max_length=128)
 
     items: list[Item] = Relationship(back_populates="store")
-    store_manager: "StoreManager | None" = Relationship(back_populates="store")
+    store_manager: Optional["StoreManager"] = Relationship(back_populates="store")
 
 
 class StoreManager(SQLModel, table=True):
@@ -86,7 +87,7 @@ class StoreManager(SQLModel, table=True):
     password_hash: str = Field(exclude=True)
 
     store_id: UUID | None = Field(foreign_key="stores.id", default=None, unique=True)
-    store: "Store | None" = Relationship(back_populates="store_manager")
+    store: Optional["Store"] = Relationship(back_populates="store_manager")
 
 
 class StoreInventory(SQLModel, table=True):
